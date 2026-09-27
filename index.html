@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Viela da Taverna Velha - O Destino de Serena</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Special+Elite&display=swap');
+
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+        .font-elite {
+            font-family: 'Special Elite', cursive;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.4; }
+            70% { opacity: 0.9; }
+        }
+
+        .torch-flicker {
+            animation: flicker 3s infinite ease-in-out;
+        }
+
+        .glass-shard {
+            transition: transform 0.1s ease, background-color 0.2s ease;
+        }
+        .glass-shard:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="bg-[#090706] text-[#d6d3d1] font-elite min-h-screen flex items-center justify-center p-4 overflow-x-hidden">
+
+    <div class="max-w-xl w-full bg-[#120f0e] border border-[#382b23] rounded-xl shadow-2xl p-6 sm:p-8 relative overflow-hidden torch-flicker">
+        
+        <!-- Background Ambient Glow -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-amber-900/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-red-900/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- Header -->
+        <div class="flex justify-between items-center border-b border-[#29201b] pb-4 mb-6">
+            <h1 class="font-cinzel text-amber-600/90 text-lg sm:text-xl font-bold tracking-widest uppercase">Viela da Taverna Velha</h1>
+            <span id="game-status" class="text-xs text-stone-500 uppercase tracking-wider bg-[#1c1715] px-2.5 py-1 rounded border border-[#29201b]">Ato I</span>
+        </div>
+
+        <!-- Story Panel -->
+        <div id="story-container" class="space-y-4 text-stone-300 text-sm sm:text-base leading-relaxed min-h-[220px]">
+            <p id="paragraph-1" class="transition-opacity duration-700">
+                A Viela da Taverna Velha engole Serena com seu hálito azedo de vinho velho e ferrugem. As paredes parecem se fechar sobre ela, manchadas de umidade e fuligem. As tochas presas em pregos tortos oscilam ao vento, lançando sombras que se contorcem feito espectros.
+            </p>
+            <p id="paragraph-2" class="transition-opacity duration-700 hidden">
+                Ela avança com cautela. O chão é um mosaico de pedras soltas, tábuas quebradas e restos de lixo — tudo misturado num labirinto de obstáculos. O som dos passos dela é quase inaudível, mas o silêncio ao redor amplifica cada respiração.
+            </p>
+            <p id="paragraph-3" class="transition-opacity duration-700 hidden">
+                De repente, o salto da bota prende em algo — uma corda, uma tábua, um engano da pressa. O corpo dela pende para frente, o mundo gira, e é o momento do destino decidir.
+            </p>
+            <p id="paragraph-4" class="transition-opacity duration-700 hidden text-red-400 font-semibold">
+                Serena tropeça desastrosamente. O tornozelo torce sob o próprio peso com um estalido abafado, e ela desaba sobre os joelhos, rasgando o tecido grosso do manto contra o chão áspero. Na queda, a palma da mão direita esmaga um caco de vidro semi-enterrado na fuligem da viela!
+            </p>
+        </div>
+
+        <!-- Interactive Section -->
+        <div id="interactive-area" class="mt-8 pt-4 border-t border-[#29201b]">
+            <button id="action-btn" onclick="nextStep()" class="w-full py-3 px-4 bg-[#1f1916] hover:bg-[#2b221e] active:scale-98 text-stone-200 font-cinzel tracking-wider rounded-lg border border-[#44352b] transition duration-200 shadow-md">
+                Avançar com Cautela
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const storyContainer = document.getElementById('story-container');
+        const actionBtn = document.getElementById('action-btn');
+        const gameStatus = document.getElementById('game-status');
+
+        function nextStep() {
+            if (currentStep === 1) {
+                document.getElementById('paragraph-2').classList.remove('hidden');
+                actionBtn.innerText = "Continuar Avançando";
+                currentStep = 2;
+            } else if (currentStep === 2) {
+                document.getElementById('paragraph-3').classList.remove('hidden');
+                actionBtn.innerText = "O Queda";
+                currentStep = 3;
+            } else if (currentStep === 3) {
+                document.getElementById('paragraph-4').classList.remove('hidden');
+                actionBtn.innerText = "Encarar o Vidro na Mão!";
+                gameStatus.innerText = "Perigo Imediato";
+                currentStep = 4;
+            } else if (currentStep === 4) {
+                startMinigame();
+            }
+        }
+
+        function startMinigame() {
+            gameStatus.innerText = "Minijogo: Reação";
+            storyContainer.innerHTML = `
+                <div class="bg-[#1c1512] border border-red-900/40 p-4 rounded-lg text-center space-y-3">
+                    <p class="text-red-300 font-bold text-base">O caco de vidro está cravado e o sangue pinga rápido!</p>
+                    <p class="text-xs text-stone-400">Clique freneticamente no vidro para estancar o sangramento e esmagar os cacos antes que o tempo acabe!</p>
+                    
+                    <div class="flex justify-between items-center px-4 py-2 bg-[#120f0e] rounded border border-[#2b201b]">
+                        <span class="text-xs text-amber-500">Tempo: <span id="timer" class="font-bold text-sm">6.0</span>s</span>
+                        <span class="text-xs text-red-500">Cliques: <span id="clicks-count" class="font-bold text-sm">0</span>/12</span>
+                    </div>
+
+                    <div id="glass-target" onclick="registerClick()" class="h-28 bg-gradient-to-br from-red-950/40 to-stone-900 border-2 border-dashed border-red-800/60 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-red-600 glass-shard select-none relative overflow-hidden">
+                        <span class="text-2xl">🩸💎</span>
+                        <span class="text-xs text-red-300 font-cinzel mt-1">CLIQUE AQUI PARA LIMPAR O FERIMENTO</span>
+                    </div>
+                </div>
+            `;
+
+            actionBtn.style.display = 'none';
+
+            let timeLeft = 6.0;
+            let clicks = 0;
+            const targetClicks = 12;
+
+            const timerInterval = setInterval(() => {
+                timeLeft -= 0.1;
+                document.getElementById('timer').innerText = timeLeft.toFixed(1);
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    finishMinigame(false, clicks);
+                }
+            }, 100);
+
+            window.registerClick = function() {
+                clicks++;
+                document.getElementById('clicks-count').innerText = clicks;
+                
+                // Visual feedback pulse
+                const target = document.getElementById('glass-target');
+                target.style.transform = 'scale(0.97)';
+                setTimeout(() => target.style.transform = 'scale(1)', 50);
+
+                if (clicks >= targetClicks) {
+                    clearInterval(timerInterval);
+                    finishMinigame(true, clicks);
+                }
+            };
+        }
+
+        function finishMinigame(success, totalClicks) {
+            let bonusText = success 
+                ? "Com reflexos ágeis, Serena estanca o sangue e afasta os cacos perigosos a tempo!" 
+                : "A hesitação custou caro; o sangue quente continua pingando pesadamente contra as pedras frias.";
+            
+            storyContainer.innerHTML = `
+                <div class="space-y-3">
+                    <p class="text-red-400 font-semibold">${bonusText}</p>
+                    <p>O corte não é profundo, mas o sangue quente ecoa gotas rítmicas e altas demais contra as pedras frias. À frente, na escuridão densa, uma silhueta se descola da parede. Um sussurro rouco e sibilante corta o ar, respondendo diretamente ao ruído da queda.</p>
+                    <p class="text-xs text-stone-400 italic">O caco estava imundo, banhado nos detritos e na escória. Agora, o destino de Serena depende do giro invisível de um dado de seis faces jogado nas sombras.</p>
+                </div>
+            `;
+
+            actionBtn.style.display = 'block';
+            actionBtn.innerText = "Rolar o Dado (d6) do Destino";
+            actionBtn.onclick = () => rollD6(success);
+            gameStatus.innerText = "O Julgamento do Dado";
+        }
+
+        function rollD6(minigameSuccess) {
+            actionBtn.disabled = true;
+            actionBtn.innerText = "Rolando o dado nas sombras...";
+            
+            storyContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-6 space-y-4">
+                    <div id="dice-box" class="w-20 h-20 bg-[#1c1715] border-2 border-amber-600/80 rounded-xl flex items-center justify-center text-3xl font-cinzel text-amber-500 shadow-inner animate-bounce">
+                        🎲
+                    </div>
+                    <p class="text-xs text-stone-400 tracking-widest uppercase">O destino está sendo lançado...</p>
+                </div>
+            `;
+
+            setTimeout(() => {
+                // If minigame was successful, weight the roll slightly better, otherwise pure random 1-6
+                let baseRoll = Math.floor(Math.random() * 6) + 1;
+                let finalRoll = minigameSuccess && baseRoll <= 2 ? baseRoll + 2 : baseRoll; // slight reward for minigame win
+                if (finalRoll > 6) finalRoll = 6;
+
+                showDiceResult(finalRoll);
+            }, 1800);
+        }
+
+        function showDiceResult(roll) {
+            gameStatus.innerText = `Resultado: D6 = ${roll}`;
+            let outcomeTitle = "";
+            let outcomeText = "";
+            let outcomeColor = "";
+
+            if (roll <= 2) {
+                outcomeTitle = "1 ou 2 (O Veneno)";
+                outcomeColor = "text-red-500";
+                outcomeText = "O vidro carregava uma toxina barata e necrosante usada por marginais da viela. O sangue absorve a sujeira rapidamente, e em segundos uma queimação fria e paralisante sobe pelo braço de Serena, fazendo sua visão escurecer antes que a sombra à frente dê o próximo passo.";
+            } else if (roll <= 4) {
+                outcomeTitle = "3 ou 4 (A Infecção)";
+                outcomeColor = "text-amber-500";
+                outcomeText = "O corte arde terrivelmente e a sujeira penetra na carne, mas não há veneno imediato. Uma febre súbita e latejante começa a tomar conta de seu corpo, exigindo que ela suporte a dor e lute contra o tempo para não desmaiar diante da figura.";
+            } else {
+                outcomeTitle = "5 ou 6 (A Sorte Milagrosa)";
+                outcomeColor = "text-emerald-500";
+                outcomeText = "Por um triplo golpe de sorte, o caco era apenas vidro velho e enferrujado, sem venenos ocultos. O sangue cessa com a pressão firme dos dedos, e Serena aperta os dentes, abafando o gemido de dor enquanto se prepara para encarar a figura que se aproxima na escuridão.";
+            }
+
+            storyContainer.innerHTML = `
+                <div class="space-y-3 bg-[#171210] p-4 rounded-lg border border-[#2b201b]">
+                    <div class="flex justify-between items-center border-b border-[#29201b] pb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-stone-400">Dado Rolado: [ ${roll} ]</span>
+                        <span class="text-xs font-bold ${outcomeColor}">${outcomeTitle}</span>
+                    </div>
+                    <p class="text-sm sm:text-base leading-relaxed text-stone-300">${outcomeText}</p>
+                </div>
+            `;
+
+            actionBtn.disabled = false;
+            actionBtn.innerText = "Jogar Novamente";
+            actionBtn.onclick = () => resetGame();
+        }
+
+        function resetGame() {
+            currentStep = 1;
+            gameStatus.innerText = "Ato I";
+            actionBtn.innerText = "Avançar com Cautela";
+            actionBtn.onclick = () => nextStep();
+            
+            storyContainer.innerHTML = `
+                <p id="paragraph-1" class="transition-opacity duration-700">
+                    A Viela da Taverna Velha engole Serena com seu hálito azedo de vinho velho e ferrugem. As paredes parecem se fechar sobre ela, manchadas de umidade e fuligem. As tochas presas em pregos tortos oscilam ao vento, lançando sombras que se contorcem feito espectros.
+                </p>
+                <p id="paragraph-2" class="transition-opacity duration-700 hidden">
+                    Ela avança com cautela. O chão é um mosaico de pedras soltas, tábuas quebradas e restos de lixo — tudo misturado num labirinto de obstáculos. O som dos passos dela é quase inaudível, mas o silêncio ao redor amplifica cada respiração.
+                </p>
+                <p id="paragraph-3" class="transition-opacity duration-700 hidden">
+                    De repente, o salto da bota prende em algo — uma corda, uma tábua, um engano da pressa. O corpo dela pende para frente, o mundo gira, e é o momento do destino decidir.
+                </p>
+                <p id="paragraph-4" class="transition-opacity duration-700 hidden text-red-400 font-semibold">
+                    Serena tropeça desastrosamente. O tornozelo torce sob o próprio peso com um estalido abafado, e ela desaba sobre os joelhos, rasgando o tecido grosso do manto contra o chão áspero. Na queda, a palma da mão direita esmaga um caco de vidro semi-enterrado na fuligem da viela!
+                </p>
+            `;
+        }
+    </script>
+</body>
+</html>
